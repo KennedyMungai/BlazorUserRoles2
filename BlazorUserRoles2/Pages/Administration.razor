@@ -1,6 +1,7 @@
 ﻿@page "/administration"
 @using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.Identity;
+@using System.Security.Claims
 @inject UserManager<IdentityUser> _UserManager
 @inject RoleManager<IdentityRole> _RoleManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -24,8 +25,29 @@
 @code {
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
+
     string ADMINISTRATION_ROLE = "Administrators";
-    System.Security.Claims.ClaimsPrincipal CurrentUser;
+
+    ClaimsPrincipal CurrentUser;
+
+    //Property used to add or edit the currently selected user
+    IdentityUser objUser = new IdentityUser();
+
+    //Tracks the selected role for the currently selected user
+    public string CurrentSelectedUser { get; set; } = "Users";
+
+    // A collection to display the existing users
+    List<IdentityUser> ColUsers = new List<IdentityUser>();
+
+    //Options to display in the roles dropdown when editing a user
+    List<string> Options = new List<string>(){"Users", "Administrators"};
+
+    //To hold any possible errors
+    string strError = string.Empty;
+
+    //To enable showing the Popup
+    bool ShowPopup = false;
+
     protected override async Task OnInitializedAsync()
     {
         // ensure there is a ADMINISTRATION_ROLE
