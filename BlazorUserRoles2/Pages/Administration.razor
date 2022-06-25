@@ -10,7 +10,31 @@
     <Authorized>
         @if (@context.User.IsInRole(ADMINISTRATION_ROLE))
         {
-            <p>You are in @ADMINISTRATION_ROLE </p>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>User Name</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var user in ColUsers)
+                    {
+                        <tr>
+                            <td>@user.Id.Substring(0,5) ...</td>
+                            <td>@user.UserName</td>
+                            <td>@user.Email</td>
+                            <td>
+                                <!-- Edit the current forecash -->
+                                <button class="btn btn-primary" @onclick="(() => EditUser(user))">
+                                    Edit
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         }
         else
         {
@@ -71,5 +95,59 @@
         }
         // Get the current logged in user
         CurrentUser = (await authenticationStateTask).User;
+
+        //Get the Users
+        GetUsers();
+    }
+
+    void AddNewUser()
+    {
+
+    }
+
+    async Task SaveUser()
+    {
+
+    }
+
+    async Task EditUser(IdentityUser _IdentityUser)
+    {
+
+    }
+
+    async Task DeletUser()
+    {
+
+    }
+
+    void ClosePopup()
+    {
+        // Close the Popup
+
+        ShowPopup = false;
+    }
+
+    public void GetUsers()
+    {
+        //Clear any error messages
+        strError = String.Empty;
+
+        //Collection to hold users
+        ColUsers = new List<IdentityUser>();
+
+        //Get users from _UserManager
+        var user = _UserManager.Users.Select(x => new IdentityUser
+            {
+                Id = x.Id, 
+                UserName = x.UserName, 
+                Email = x.Email,
+                PasswordHash = "*****"
+            }
+        );
+
+        foreach (var item in user)
+        {
+            ColUsers.Add(item);
+        }
     }
 }
